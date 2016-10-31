@@ -2,9 +2,10 @@
  * Bitbucket backup script
  * Helps you backup all your bitbucket repositories to a local folder
  *
- * Usage: node app --user=bbUser --pass=bbPass --owner=companyOrUserName --folder=./backup
+ * Usage: node app --user=bbUser --pass=bbPass --owner=companyOrUserName --folder=./backup --auth=ssh
  *
  * --folder is optional. It defaults to ./bb-backup
+ * --auth is optional. It defaults to using https authentication
 */
 var path = require('path');
 var async = require('async');
