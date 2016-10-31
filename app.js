@@ -42,7 +42,10 @@ getAllRepos(url, auth, function (error, repos) {
 
 		// Choose between git and mercurial
 		var command = repo.scm == 'git' ? 'git' : 'hg';
+
+		// Choose between https and ssh authentication
 		var protocol = argv.opts.auth == 'ssh' ? 1 : 0;
+		
 		exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repo.name, callback);
 	});
 });
