@@ -31,7 +31,6 @@ backupFolder = path.normalize(backupFolder + '/');
 // Get all repos from Bitbucket
 getAllRepos(url, auth, function (error, repos) {
 	if (error) {
-		console.log('Opps')
 		throw error;
 	}
 
