@@ -54,7 +54,7 @@ getAllRepos(url, auth, function (error, repos) {
 
 			if (fs.statSync(backupFolder + repoName)) {
 
-				console.log('Repo exists. Fetching and pulling...', repo.name);
+				console.log('Fetching and pulling...', repo.name);
 
 				exec('cd ' + backupFolder + repoName + ' && ' + command + ' fetch --all && ' + command + ' pull --all && cd ../..', callback);
 
@@ -64,7 +64,7 @@ getAllRepos(url, auth, function (error, repos) {
 		// If repo does not exist locally then clone
 		catch(e) {
 
-			console.log('Repo does not exist. Cloning...', repo.name);
+			console.log('Cloning...', repo.name);
 
 			exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repoName, callback);
 
