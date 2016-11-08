@@ -46,13 +46,8 @@ getAllRepos(url, auth, function (error, repos) {
 		// Choose between https and ssh authentication
 		var protocol = argv.opts.auth == 'ssh' ? 1 : 0;
 
-		exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repo.name, callback);
+		exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repo.name + ' && cd ' + backupFolder + repo.name + ' && ' + command + ' fetch --all && ' + command + ' pull --all && cd ../..', callback);
 
-		exec(cd repo.name);
-
-		console.log('Fetching', repo.name);
-
-		exec(command + ' fetch && ' + command + ' pull && cd ..');
 	});
 });
 
