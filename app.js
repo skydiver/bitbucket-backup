@@ -12,6 +12,7 @@ var async = require('async');
 var argv = require('named-argv');
 var request = require('request');
 var exec = require('child_process').exec;
+var fs = require('fs');
 
 // Check the incoming params
 if (!argv.opts || !argv.opts.owner || !argv.opts.user || !argv.opts.pass) {
@@ -48,13 +49,13 @@ getAllRepos(url, auth, function (error, repos) {
 		// If repo does not exist locally then clone from Bitbucket, if it does then fetch and pull
 		if (fs.statSync(backupFolder + repo.name)) {
 
-			console.log('Fetching and pulling...', repo.name);
+			console.log('Folder exists. Fetching and pulling...', repo.name);
 
 			exec('cd ' + backupFolder + repo.name + ' && ' + command + ' fetch --all && ' + command + ' pull --all && cd ../..', callback);
 
 		} else {
 
-			console.log('Cloning...', repo.name);
+			console.log('Folder does not exist. Cloning...', repo.name);
 
 			exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repo.name, callback);
 
