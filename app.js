@@ -4,7 +4,7 @@
  *
  * Usage: node app --user=bbUser --pass=bbPass --owner=companyOrUserName --folder=./backup --auth=ssh
  *
- * --folder is optional. It defaults to ./bb-backup
+ * --folder is optional. It defaults to ./bitbucket-repo-backups
  * --auth is optional. It defaults to using https authentication
 */
 var path = require('path');
@@ -12,6 +12,7 @@ var async = require('async');
 var argv = require('named-argv');
 var request = require('request');
 var exec = require('child_process').exec;
+var fs = require('fs');
 
 // Check the incoming params
 if (!argv.opts || !argv.opts.owner || !argv.opts.user || !argv.opts.pass) {
@@ -25,7 +26,7 @@ var auth = {
 	pass: argv.opts.pass
 };
 
-var backupFolder = argv.opts.folder || './bb-backup';
+var backupFolder = argv.opts.folder || './bitbucket-repo-backups';
 backupFolder = path.normalize(backupFolder + '/');
 
 // Get all repos from Bitbucket
@@ -38,7 +39,9 @@ getAllRepos(url, auth, function (error, repos) {
 
 	// Iterate over all repos, clone each to local folder
 	async.eachLimit(repos, 500, function (repo, callback) {
-		console.log('Cloning', repo.name);
+
+		// Remove any whitespace from repo name and make lowercase
+		var repoName = repo.name.replace(/\s+/g, '-').toLowerCase();
 
 		// Choose between git and mercurial
 		var command = repo.scm == 'git' ? 'git' : 'hg';
@@ -46,7 +49,27 @@ getAllRepos(url, auth, function (error, repos) {
 		// Choose between https and ssh authentication
 		var protocol = argv.opts.auth == 'ssh' ? 1 : 0;
 
-		exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repo.name, callback);
+		// If repo exists locally then fetch and pull
+		try {
+
+			if (fs.statSync(backupFolder + repoName)) {
+
+				console.log('Fetching and pulling...', repo.name);
+
+				exec('cd ' + backupFolder + repoName + ' && ' + command + ' fetch --all && ' + command + ' pull --all && cd ../..', callback);
+
+			}
+		}
+
+		// If repo does not exist locally then clone
+		catch(e) {
+
+			console.log('Cloning...', repo.name);
+
+			exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repoName, callback);
+
+		}
+
 	});
 });
 
