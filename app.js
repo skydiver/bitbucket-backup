@@ -4,7 +4,7 @@
  *
  * Usage: node app --user=bbUser --pass=bbPass --owner=companyOrUserName --folder=./backup --auth=ssh
  *
- * --folder is optional. It defaults to ./bb-backup
+ * --folder is optional. It defaults to ./bitbucket-repo-backups
  * --auth is optional. It defaults to using https authentication
 */
 var path = require('path');
