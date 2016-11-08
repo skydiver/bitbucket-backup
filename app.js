@@ -38,7 +38,6 @@ getAllRepos(url, auth, function (error, repos) {
 
 	// Iterate over all repos, clone each to local folder
 	async.eachLimit(repos, 500, function (repo, callback) {
-		console.log('Cloning', repo.name);
 
 		// Choose between git and mercurial
 		var command = repo.scm == 'git' ? 'git' : 'hg';
@@ -46,7 +45,20 @@ getAllRepos(url, auth, function (error, repos) {
 		// Choose between https and ssh authentication
 		var protocol = argv.opts.auth == 'ssh' ? 1 : 0;
 
-		exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repo.name + ' && cd ' + backupFolder + repo.name + ' && ' + command + ' fetch --all && ' + command + ' pull --all && cd ../..', callback);
+		// If repo does not exist locally then clone from Bitbucket, if it does then fetch and pull
+		if (fs.statSync(backupFolder + repo.name)) {
+
+			console.log('Fetching and pulling...', repo.name);
+
+			exec('cd ' + backupFolder + repo.name + ' && ' + command + ' fetch --all && ' + command + ' pull --all && cd ../..', callback);
+
+		} else {
+
+			console.log('Cloning...', repo.name);
+
+			exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repo.name);
+
+		}
 
 	});
 });
