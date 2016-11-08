@@ -56,7 +56,7 @@ getAllRepos(url, auth, function (error, repos) {
 
 			console.log('Cloning...', repo.name);
 
-			exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repo.name);
+			exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repo.name, callback);
 
 		}
 
