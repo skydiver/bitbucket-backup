@@ -29,6 +29,9 @@ var auth = {
 var backupFolder = argv.opts.folder || './bitbucket-repo-backups';
 backupFolder = path.normalize(backupFolder + '/');
 
+// Remove any whitespace from repo name and make lowercase
+var repoName = repo.name.replace(/\s+/g, '-').toLowerCase()
+
 // Get all repos from Bitbucket
 getAllRepos(url, auth, function (error, repos) {
 	if (error) {
@@ -57,7 +60,7 @@ getAllRepos(url, auth, function (error, repos) {
 
 			}
 		}
-		
+
 		// If repo does not exist locally then clone
 		catch(e) {
 
