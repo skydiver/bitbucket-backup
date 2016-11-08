@@ -52,11 +52,11 @@ getAllRepos(url, auth, function (error, repos) {
 		// If repo exists locally then fetch and pull
 		try {
 
-			if (fs.statSync(backupFolder + repo.name)) {
+			if (fs.statSync(backupFolder + repoName)) {
 
-				console.log('Repo exists. Fetching and pulling...', repo.name);
+				console.log('Repo exists. Fetching and pulling...', repoName);
 
-				exec('cd ' + backupFolder + repo.name + ' && ' + command + ' fetch --all && ' + command + ' pull --all && cd ../..', callback);
+				exec('cd ' + backupFolder + repoName + ' && ' + command + ' fetch --all && ' + command + ' pull --all && cd ../..', callback);
 
 			}
 		}
@@ -64,9 +64,9 @@ getAllRepos(url, auth, function (error, repos) {
 		// If repo does not exist locally then clone
 		catch(e) {
 
-			console.log('Repo does not exist. Cloning...', repo.name);
+			console.log('Repo does not exist. Cloning...', repoName);
 
-			exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repo.name, callback);
+			exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repoName, callback);
 
 		}
 
