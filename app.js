@@ -25,7 +25,7 @@ var auth = {
 	pass: argv.opts.pass
 };
 
-var backupFolder = argv.opts.folder || './bb-backup';
+var backupFolder = argv.opts.folder || './bitbucket-repo-backups';
 backupFolder = path.normalize(backupFolder + '/');
 
 // Get all repos from Bitbucket
