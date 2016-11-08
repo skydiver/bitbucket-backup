@@ -46,16 +46,22 @@ getAllRepos(url, auth, function (error, repos) {
 		// Choose between https and ssh authentication
 		var protocol = argv.opts.auth == 'ssh' ? 1 : 0;
 
-		// If repo does not exist locally then clone from Bitbucket, if it does then fetch and pull
-		if (fs.statSync(backupFolder + repo.name)) {
+		// If repo exists locally then fetch and pull
+		try {
 
-			console.log('Folder exists. Fetching and pulling...', repo.name);
+			if (fs.statSync(backupFolder + repo.name)) {
 
-			exec('cd ' + backupFolder + repo.name + ' && ' + command + ' fetch --all && ' + command + ' pull --all && cd ../..', callback);
+				console.log('Repo exists. Fetching and pulling...', repo.name);
 
-		} else {
+				exec('cd ' + backupFolder + repo.name + ' && ' + command + ' fetch --all && ' + command + ' pull --all && cd ../..', callback);
 
-			console.log('Folder does not exist. Cloning...', repo.name);
+			}
+		}
+		
+		// If repo does not exist locally then clone
+		catch(e) {
+
+			console.log('Repo does not exist. Cloning...', repo.name);
 
 			exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repo.name, callback);
 
