@@ -2,9 +2,10 @@
  * Bitbucket backup script
  * Helps you backup all your bitbucket repositories to a local folder
  *
- * Usage: node app --user=bbUser --pass=bbPass --owner=companyOrUserName --folder=./backup
+ * Usage: node app --user=bbUser --pass=bbPass --owner=companyOrUserName --folder=./backup --auth=ssh
  *
  * --folder is optional. It defaults to ./bb-backup
+ * --auth is optional. It defaults to using https authentication
 */
 var path = require('path');
 var async = require('async');
@@ -20,8 +21,8 @@ if (!argv.opts || !argv.opts.owner || !argv.opts.user || !argv.opts.pass) {
 
 var url = 'https://api.bitbucket.org/2.0/repositories/' + argv.opts.owner;
 var auth = {
-		user: argv.opts.user,
-		pass: argv.opts.pass
+	user: argv.opts.user,
+	pass: argv.opts.pass
 };
 
 var backupFolder = argv.opts.folder || './bb-backup';
@@ -36,12 +37,16 @@ getAllRepos(url, auth, function (error, repos) {
 	console.log('Got %d repos. Processing...', repos.length);
 
 	// Iterate over all repos, clone each to local folder
-	async.eachLimit(repos, 5, function (repo, callback) {
+	async.eachLimit(repos, 500, function (repo, callback) {
 		console.log('Cloning', repo.name);
 
 		// Choose between git and mercurial
 		var command = repo.scm == 'git' ? 'git' : 'hg';
-		exec(command + ' clone ' + repo.links.clone[0].href + ' ' + backupFolder + repo.name, callback);
+
+		// Choose between https and ssh authentication
+		var protocol = argv.opts.auth == 'ssh' ? 1 : 0;
+
+		exec(command + ' clone ' + repo.links.clone[protocol].href + ' ' + backupFolder + repo.name, callback);
 	});
 });
 
