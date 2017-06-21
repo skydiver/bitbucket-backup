@@ -7,12 +7,13 @@
  * --folder is optional. It defaults to ./bitbucket-repo-backups
  * --auth is optional. It defaults to using https authentication
  */
-var path = require('path');
-var async = require('async');
-var argv = require('named-argv');
-var request = require('request');
-var exec = require('child_process').exec;
-var fs = require('fs');
+
+let path = require('path');
+let async = require('async');
+let argv = require('named-argv');
+let request = require('request');
+let exec = require('child_process').exec;
+let fs = require('fs');
 
 // Check the incoming params
 if (!argv.opts || !argv.opts.owner || !argv.opts.user || !argv.opts.pass) {
@@ -20,13 +21,13 @@ if (!argv.opts || !argv.opts.owner || !argv.opts.user || !argv.opts.pass) {
     process.exit(1);
 }
 
-var url = 'https://api.bitbucket.org/2.0/repositories/' + argv.opts.owner;
-var auth = {
+let url = 'https://api.bitbucket.org/2.0/repositories/' + argv.opts.owner;
+let auth = {
     user: argv.opts.user,
     pass: argv.opts.pass
 };
 
-var backupFolder = argv.opts.folder || './bitbucket-repo-backups';
+let backupFolder = argv.opts.folder || './bitbucket-repo-backups';
 backupFolder = path.normalize(backupFolder + '/');
 
 // Get all repos from Bitbucket
@@ -41,13 +42,13 @@ getAllRepos(url, auth, function (error, repos) {
     async.eachLimit(repos, 500, function (repo, callback) {
 
         // Remove any whitespace from repo name and make lowercase
-        var repoName = repo.name.replace(/\s+/g, '-').toLowerCase();
+        let repoName = repo.name.replace(/\s+/g, '-').toLowerCase();
 
         // Choose between git and mercurial
-        var command = repo.scm == 'git' ? 'git' : 'hg';
+        let command = repo.scm == 'git' ? 'git' : 'hg';
 
         // Choose between https and ssh authentication
-        var protocol = argv.opts.auth == 'ssh' ? 1 : 0;
+        let protocol = argv.opts.auth == 'ssh' ? 1 : 0;
 
         // If repo exists locally then fetch and pull
         try {
@@ -77,22 +78,20 @@ getAllRepos(url, auth, function (error, repos) {
  * Get all repositories from the specified url
  *
  * @callback processCallback
- * @param {Object} error
- * @param {Array} repos - list of repositories
  *
  * @param {String} url - Bitbucket API url
  * @param {Object} auth - Object containing bitbucket username and password
  * @param {processCallback} callback
  */
 function getAllRepos(url, auth, callback) {
-    var repos = [];
-    var apiUrl = url;
+    let repos = [];
+    let apiUrl = url;
 
     // Iterate bitbucket pages, collect all repositories to repos array
     async.doWhilst(
         function (callback) {
             request.get(apiUrl, {auth: auth}, function (error, response, body) {
-                var json = null;
+                let json = null;
 
                 try {
                     json = JSON.parse(body);
