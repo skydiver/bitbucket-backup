@@ -20,8 +20,8 @@ if (!argv.opts || !argv.opts.owner || !argv.opts.user || !argv.opts.pass) {
 
 /* PARAMETERS */
 let params = {
-    url: 'https://api.bitbucket.org/2.0/repositories/' + argv.opts.owner,
-    protocol: argv.opts.auth == 'ssh' ? 1 : 0,
+    url: 'https://api.bitbucket.org/2.0/repositories/' + argv.opts.owner + '/?pagelen=100',
+    protocol: (argv.opts.auth === 'ssh') ? 1 : 0,
     folder: path.normalize(argv.opts.folder || './bitbucket-repo-backups' + '/'),
     user: argv.opts.user,
     pass: argv.opts.pass

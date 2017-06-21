@@ -14,7 +14,7 @@ exports.clone = async (params) => {
 
         let repoName = repo.name.replace(/\s+/g, '-').toLowerCase();
 
-        let command = repo.scm == 'git' ? 'git' : 'hg';
+        let command = (repo.scm === 'git') ? 'git' : 'hg';
 
         try {
             if (fs.statSync(folder + repoName)) {
