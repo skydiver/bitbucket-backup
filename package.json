@@ -17,8 +17,8 @@
   "author": "Eugene Chiriliuc <ec.developer@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "async": "^1.4.0",
     "named-argv": "^0.3.0",
-    "request": "^2.59.0"
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1"
   }
 }
